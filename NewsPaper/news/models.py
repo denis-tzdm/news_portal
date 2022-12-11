@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from datetime import datetime
 
 
 class NewsUser(User):
@@ -62,6 +63,11 @@ class Post(models.Model):
     rating = models.IntegerField(default=0)
     categories = models.ManyToManyField(Category, through='PostCategory')
 
+    def __str__(self):
+        date_str = datetime.strftime(self.create_ts, '%d.%m.%y %H:%M:%S')
+        title_short = self.title if len(self.title) <= 30 else self.title[:30] + '…'
+        return f'{date_str} {title_short}'
+
     def like(self) -> None:
         """Повысить рейтинг поста на 1"""
         self.rating += 1
@@ -74,7 +80,7 @@ class Post(models.Model):
 
     def preview(self) -> str:
         """Получить превью поста (первые 124 знака и символ многоточия)"""
-        return self.content[:125] + "…"
+        return self.content[:125] + '…'
 
 
 class PostCategory(models.Model):
