@@ -1,10 +1,11 @@
 {% extends 'flatpages/default.html' %}
+{% load news_filters %}
 
 {% block title %}
 Запись
 {% endblock title %}
 {% block content %}
-    <h2>{{ post.title }}</h2>
+    <h2>{{ post.title|censor }}</h2>
     {{ post.create_ts|date:'d.m.y' }}
     <hr>
     <div style="
@@ -12,6 +13,6 @@
     width: 70%;
     margin-left: auto;
     margin-right: auto;">
-        {{ post.content }}
+        {{ post.content|censor }}
     </div>
 {% endblock content %}
