@@ -1,9 +1,18 @@
 {% extends 'flatpages/default.html' %}
 
 {% block title %}
-Все записи
+Все записи {% if postlist %}(всего {{ postlist|length }}){% endif %}
 {% endblock title %}
 
 {% block content %}
-{{ postlist }}
+    {% if postlist %}
+        {% for post in postlist %}
+            {{ post.create_ts|date:'d.m.y H:i:s' }}<br>
+            <b>{{ post.title }}</b><br>
+            {{ post.content|truncatewords:20 }}
+            <hr>
+        {% endfor %}
+    {% else %}
+        Записей пока нет :-(
+    {% endif %}
 {% endblock content %}
