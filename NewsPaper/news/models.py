@@ -2,6 +2,7 @@ from datetime import datetime
 
 from django.contrib.auth.models import User
 from django.db import models
+from django.urls import reverse
 
 
 class NewsUser(User):
@@ -14,6 +15,9 @@ class NewsUser(User):
 class Author(models.Model):
     user = models.ForeignKey(NewsUser, on_delete=models.CASCADE)
     rating = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.user.username
 
     @staticmethod
     def get_deleted():
@@ -85,6 +89,9 @@ class Post(models.Model):
     def preview(self) -> str:
         """Получить превью поста (первые 124 знака и символ многоточия)"""
         return self.content[:125] + '…'
+
+    def get_absolute_url(self):
+        return reverse('post_details', args=[str(self.id)])
 
 
 class PostCategory(models.Model):

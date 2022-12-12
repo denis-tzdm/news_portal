@@ -1,0 +1,14 @@
+{% extends 'flatpages/default.html' %}
+{% load news_tags %}
+
+{% block title %}
+    {{ action }}: {{ type|lower }}
+{% endblock title %}
+
+{% block content %}
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Опубликовать"/>
+    </form>
+{% endblock content %}

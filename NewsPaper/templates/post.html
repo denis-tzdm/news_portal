@@ -2,7 +2,7 @@
 {% load news_filters %}
 
 {% block title %}
-Запись
+    {{ type }}
 {% endblock title %}
 {% block content %}
     <h2>{{ post.title|censor }}</h2>

@@ -1,0 +1,16 @@
+{% extends 'flatpages/default.html' %}
+{% load news_tags %}
+
+{% block title %}
+    {{ action }}: {{ type|lower }}
+{% endblock title %}
+
+{% block content %}
+    <h1>{{ type }} "{{ post.title }}" будет удалена!</h1>
+    <hr>
+    <form action="" method="post">
+        {% csrf_token %}
+        <p>Вы уверены?</p>
+        <input type="submit" value="Удалить"/>
+    </form>
+{% endblock content %}
