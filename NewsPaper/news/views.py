@@ -6,6 +6,7 @@ class PostList(ListView):
     ordering = '-create_ts'
     template_name = 'postlist.html'
     context_object_name = 'postlist'
+    paginate_by = 10
 
 
 class PostDetail(DetailView):
