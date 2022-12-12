@@ -1,6 +1,7 @@
-from django.db import models
-from django.contrib.auth.models import User
 from datetime import datetime
+
+from django.contrib.auth.models import User
+from django.db import models
 
 
 class NewsUser(User):
@@ -42,6 +43,9 @@ class Author(models.Model):
 
 class Category(models.Model):
     title = models.CharField(max_length=255, unique=True)
+
+    def __str__(self):
+        return self.title
 
 
 class Post(models.Model):

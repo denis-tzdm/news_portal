@@ -8,6 +8,12 @@
 
 {% block content %}
 
+    <form action="" method="get">
+        {{ filterset.form.as_p }}
+        <input type="submit" value="Поиск"/>
+    </form>
+    <hr>
+
     {% if postlist %}
         {% for post in postlist %}
             {{ post.create_ts|date:'d.m.y H:i:s' }}<br>
