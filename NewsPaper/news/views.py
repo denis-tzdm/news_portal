@@ -10,13 +10,13 @@ from django.views.generic import (
 
 from .filters import PostFilter
 from .forms import PostForm
-from .models import Post, Author
+from .models import Post, Author, Category
 
 
 class PostList(ListView):
     model = Post
     ordering = '-create_ts'
-    template_name = 'postlist.html'
+    template_name = 'news/postlist.html'
     context_object_name = 'postlist'
     paginate_by = 10
 
@@ -28,27 +28,35 @@ class PostList(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['filterset'] = self.filterset
-        context['is_author'] = self.request.user.groups.filter(name='authors').exists()
-        context['show_became_author'] = (
-                self.request.user.is_authenticated
-                and not context['is_author']
-        )
+        context['category'] = ''
+        context['categories'] = Category.objects.all()
+        add_author_fields(self, context)
+        return context
+
+
+class CategoryPostList(PostList):
+    def get_queryset(self):
+        cat = Category.objects.filter(id=self.kwargs['pk']).first()
+        queryset = Post.objects.filter(postcategory__category=cat)
+        self.filterset = PostFilter(self.request.GET, queryset)
+        self.filterset.form.fields.pop('categories')
+        return self.filterset.qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['category'] = Category.objects.filter(id=self.kwargs['pk']).first()
         return context
 
 
 class PostDetail(DetailView):
     model = Post
-    template_name = 'post.html'
+    template_name = 'news/post.html'
     context_object_name = 'post'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['type'] = get_post_type(context['post'])
-        context['is_author'] = self.request.user.groups.filter(name='authors').exists()
-        context['show_became_author'] = (
-                self.request.user.is_authenticated
-                and not context['is_author']
-        )
+        add_author_fields(self, context)
         return context
 
 
@@ -56,7 +64,7 @@ class PostCreate(PermissionRequiredMixin, CreateView):
     permission_required = ('news.add_post',)
     form_class = PostForm
     model = Post
-    template_name = 'post_edit.html'
+    template_name = 'news/post_edit.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -85,7 +93,7 @@ class PostEdit(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     permission_required = ('news.change_post',)
     form_class = PostForm
     model = Post
-    template_name = 'post_edit.html'
+    template_name = 'news/post_edit.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -97,7 +105,7 @@ class PostEdit(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
 class PostDelete(PermissionRequiredMixin, DeleteView):
     permission_required = ('news.delete_post',)
     model = Post
-    template_name = 'post_delete.html'
+    template_name = 'news/post_delete.html'
     success_url = reverse_lazy('post_list')
 
     def get_context_data(self, **kwargs):
@@ -121,3 +129,11 @@ def get_post_type(post: Post | None, path: str = '') -> str:
             value = 'Статья'
 
     return value
+
+
+def add_author_fields(view, context):
+    context['is_author'] = view.request.user.groups.filter(name='authors').exists()
+    context['show_became_author'] = (
+            view.request.user.is_authenticated
+            and not context['is_author']
+    )

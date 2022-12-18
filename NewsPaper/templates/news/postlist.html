@@ -3,7 +3,14 @@
 {% load news_tags %}
 
 {% block title %}
-    Все записи {% if postlist %}(всего {{ postlist|length }}){% endif %}
+    {% if category %}
+        Категория {{ category }}
+    {% elif category == '' %}
+        Все записи
+    {% else %}
+        Неизвестная категория
+    {% endif %}
+    {% if postlist %}(всего {{ postlist|length }}){% endif %}
 {% endblock title %}
 
 {% block links %}
@@ -25,10 +32,29 @@
 
 {% block content %}
 
-    <form action="" method="get">
-        {{ filterset.form.as_p }}
-        <input type="submit" value="Поиск"/>
-    </form>
+    <table style="width: 100%">
+        <tr>
+            <td style="width: 70%">
+                <form action="" method="get">
+                    {{ filterset.form.as_p }}
+                    <input type="submit" value="Поиск"/>
+                </form>
+            </td>
+            <td style="width: 30%">
+                {% if categories %}
+                    {% for cat in categories %}
+                        {% if cat == category %}
+                            <a href="/news/categories/{{ cat.id }}"><b>{{ cat }}</b></a>
+                            <br>
+                        {% else %}
+                            <a href="/news/categories/{{ cat.id }}">{{ cat }}</a>
+                            <br>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </td>
+        </tr>
+    </table>
     <hr>
 
     {% if postlist %}
