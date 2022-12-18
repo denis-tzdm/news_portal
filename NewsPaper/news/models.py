@@ -5,15 +5,13 @@ from django.db import models
 from django.urls import reverse
 
 
-class NewsUser(User):
-    @staticmethod
-    def get_deleted():
-        """Получить пользователя для подстановки при удалении"""
-        return NewsUser.objects.get_or_create(username='Пользователь удален')[0]
+def get_deleted_user():
+    """Получить пользователя для подстановки при удалении"""
+    return User.objects.get_or_create(username='Пользователь удален')[0]
 
 
 class Author(models.Model):
-    user = models.ForeignKey(NewsUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     rating = models.IntegerField(default=0)
 
     def __str__(self):
@@ -22,7 +20,7 @@ class Author(models.Model):
     @staticmethod
     def get_deleted():
         """Получить автора для подстановки при удалении"""
-        return Author.objects.get_or_create(user=NewsUser.get_deleted())[0]
+        return Author.objects.get_or_create(user=get_deleted_user())[0]
 
     def update_rating(self) -> None:
         """Обновить рейтинг автора, сумма:
@@ -101,7 +99,7 @@ class PostCategory(models.Model):
 
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
-    user = models.ForeignKey(NewsUser, on_delete=models.SET(NewsUser.get_deleted))
+    user = models.ForeignKey(User, on_delete=models.SET(get_deleted_user))
     content = models.TextField()
     create_ts = models.DateTimeField(auto_now_add=True)
     rating = models.IntegerField(default=0)

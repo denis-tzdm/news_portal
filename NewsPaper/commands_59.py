@@ -1,10 +1,10 @@
 from news.models import *
 
 # создание пользователей
-for _ in ['Ann', 'Jack']: NewsUser.objects.create_user(_)
+for _ in ['Ann', 'Jack']: User.objects.create_user(_)
 
 # создание авторов
-for _ in NewsUser.objects.all(): Author.objects.create(user=_)
+for _ in User.objects.all(): Author.objects.create(user=_)
 
 # создание категорий
 for _ in ['politics', 'animals', 'art', 'cosmos']: Category.objects.create(title=_)
@@ -52,19 +52,19 @@ _post3 = Post.objects.create(author=_author, type=_type, title=_title, content=_
 _post3.categories.add(Category.objects.get(pk=3))
 
 #комментарии
-_user = NewsUser.objects.get(pk=2)
+_user = User.objects.get(pk=2)
 _content = '''У Балабобы нет своего мнения или знания.'''
 _comment1 = Comment.objects.create(post=_post1, user=_user, content=_content)
 
-_user = NewsUser.objects.get(pk=2)
+_user = User.objects.get(pk=2)
 _content = '''Он умеет только подражать — писать тексты так, чтобы они были максимально похожи на реальные тексты из интернета.'''
 _comment2 = Comment.objects.create(post=_post1, user=_user, content=_content)
 
-_user = NewsUser.objects.get(pk=1)
+_user = User.objects.get(pk=1)
 _content = '''Здесь YaLM используется для развлечения.'''
 _comment3 = Comment.objects.create(post=_post2, user=_user, content=_content)
 
-_user = NewsUser.objects.get(pk=1)
+_user = User.objects.get(pk=1)
 _content = '''с помощью нейросетей семейства YaLM можно продолжать тексты на любую тему, сохраняя связность и заданный стиль.'''
 _comment4 = Comment.objects.create(post=_post3, user=_user, content=_content)
 
