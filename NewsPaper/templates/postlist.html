@@ -6,6 +6,23 @@
     Все записи {% if postlist %}(всего {{ postlist|length }}){% endif %}
 {% endblock title %}
 
+{% block links %}
+    {% if show_became_author %}
+        <li class="nav-item"><a class="nav-link" href="/became_author">Стать автором</a></li>
+    {% endif %}
+    {% if is_author %}
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown"
+               aria-expanded="false">Написать</a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="/news/create">Новость</a></li>
+                <li><a class="dropdown-item" href="/articles/create">Статью</a></li>
+            </ul>
+        </li>
+    {% endif %}
+    {{ block.super }}
+{% endblock links %}
+
 {% block content %}
 
     <form action="" method="get">
@@ -16,8 +33,8 @@
 
     {% if postlist %}
         {% for post in postlist %}
-            {{ post.create_ts|date:'d.m.y H:i:s' }}<br>
-            <b>{{ post.title|censor }}</b><br>
+            {{ post.author }} {{ post.create_ts|date:'d.m.y H:i:s' }}<br>
+            <a href="/news/{{ post.id }}"><b>{{ post.title|censor }}</b></a><br>
             {{ post.content|censor|truncatewords:20 }}
             <hr>
         {% endfor %}

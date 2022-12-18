@@ -1,9 +1,16 @@
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.urls import reverse, reverse_lazy
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import (
+    ListView,
+    DetailView,
+    CreateView,
+    UpdateView,
+    DeleteView,
+)
 
 from .filters import PostFilter
 from .forms import PostForm
-from .models import Post
+from .models import Post, Author
 
 
 class PostList(ListView):
@@ -21,6 +28,11 @@ class PostList(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['filterset'] = self.filterset
+        context['is_author'] = self.request.user.groups.filter(name='authors').exists()
+        context['show_became_author'] = (
+                self.request.user.is_authenticated
+                and not context['is_author']
+        )
         return context
 
 
@@ -32,10 +44,16 @@ class PostDetail(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['type'] = get_post_type(context['post'])
+        context['is_author'] = self.request.user.groups.filter(name='authors').exists()
+        context['show_became_author'] = (
+                self.request.user.is_authenticated
+                and not context['is_author']
+        )
         return context
 
 
-class PostCreate(CreateView):
+class PostCreate(PermissionRequiredMixin, CreateView):
+    permission_required = ('news.add_post',)
     form_class = PostForm
     model = Post
     template_name = 'post_edit.html'
@@ -49,8 +67,7 @@ class PostCreate(CreateView):
 
     def form_valid(self, form):
         new_post = form.save(commit=False)
-        # to-do: подставлять автора по авторизованному пользователю
-        # new_post.author =
+        # new_post.author = Author.objects.get(user=self.request.user)
         path = self.request.get_full_path()
         if path == reverse('news_create'):
             new_post.type = Post.news
@@ -58,8 +75,14 @@ class PostCreate(CreateView):
             new_post.type = Post.article
         return super().form_valid(form)
 
+    def get_form_kwargs(self):
+        kwargs = super(PostCreate, self).get_form_kwargs()
+        kwargs['author'] = Author.objects.get(user=self.request.user)
+        return kwargs
 
-class PostEdit(UpdateView):
+
+class PostEdit(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    permission_required = ('news.change_post',)
     form_class = PostForm
     model = Post
     template_name = 'post_edit.html'
@@ -71,7 +94,8 @@ class PostEdit(UpdateView):
         return context
 
 
-class PostDelete(DeleteView):
+class PostDelete(PermissionRequiredMixin, DeleteView):
+    permission_required = ('news.delete_post',)
     model = Post
     template_name = 'post_delete.html'
     success_url = reverse_lazy('post_list')
