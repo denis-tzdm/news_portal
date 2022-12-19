@@ -1,4 +1,5 @@
-from django.contrib.auth.decorators import login_required
+from datetime import datetime, date, time
+
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
@@ -87,6 +88,15 @@ class PostCreate(PermissionRequiredMixin, CreateView):
     form_class = PostForm
     model = Post
     template_name = 'news/post_edit.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        today = datetime.combine(date.today(), time())
+        today_user_posts = Post.objects.filter(create_ts__gt=today, author__user=request.user)
+        if today_user_posts.count() >= 3:
+            # todo: notify user somehow
+            return HttpResponseRedirect(reverse('post_list'))
+        else:
+            return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
