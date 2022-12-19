@@ -18,6 +18,7 @@ from django.urls import path, include
 from accounts.views import became_author
 
 urlpatterns = [
+    path('', include('news.urls')),
     path('admin/', admin.site.urls),
     path('pages/', include('django.contrib.flatpages.urls')),
     path('news/', include('news.urls')),
