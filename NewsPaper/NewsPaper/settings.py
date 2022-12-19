@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.flatpages',
     'news',
     'accounts',
+    'notifier.apps.NotifierConfig',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -159,5 +160,15 @@ ACCOUNT_USERNAME_REQUIRED = True
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 
-# форма с переопределённым классом для добавления пользователя в группу по умолчанию
-ACCOUNT_FORMS = {'signup': 'news.forms.BasicSignupForm'}
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 1
+
+# настройки отправки почты
+EMAIL_HOST = str(os.getenv('EMAIL_HOST'))
+EMAIL_PORT = int(os.getenv('EMAIL_PORT'))
+EMAIL_HOST_USER = str(os.getenv('EMAIL_HOST_USER'))
+EMAIL_HOST_PASSWORD = str(os.getenv('EMAIL_HOST_PASSWORD'))
+EMAIL_USE_SSL = True
+
+SERVER_EMAIL = str(os.getenv('DEFAULT_FROM_EMAIL'))
+DEFAULT_FROM_EMAIL = str(os.getenv('DEFAULT_FROM_EMAIL'))

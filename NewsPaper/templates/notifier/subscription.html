@@ -1,0 +1,26 @@
+{% extends 'notifier/main.html' %}
+{% load news_filters %}
+
+{% block main_message %}
+    <p>В категории {{ category }}, на которую Вы подписаны, опубликована новая статья.</p>
+    <br>
+{% endblock %}
+
+{% block button %}
+{% endblock %}
+
+{% block secondary_message %}
+    <div style="
+    text-align: center;
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;">
+        <p><b>{{ post.title|censor }}</b></p>
+        <b>{{ post.author }}</b>, {{ post.create_ts|date:'d.m.y' }}
+        <hr>
+        <div style="text-align: justify;">
+            {{ post.content|censor|truncatechars:150 }}
+        </div>
+    </div>
+    <br>
+{% endblock %}
