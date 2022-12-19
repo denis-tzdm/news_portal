@@ -20,7 +20,7 @@ def notify_subscribers_new_post(sender, instance, action, **kwargs):
                 html = render_to_string(
                     'notifier/subscription.html',
                     {
-                        'subscriber': subscription.subscriber,
+                        'user': subscription.subscriber,
                         'category': cat,
                         'post': instance,
                         'post_link': f'{protocol}://{domain}{instance.get_absolute_url()}'

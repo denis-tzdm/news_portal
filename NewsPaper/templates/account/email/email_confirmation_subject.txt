@@ -1,0 +1,1 @@
+Регистрация на {{ current_site.name }}
