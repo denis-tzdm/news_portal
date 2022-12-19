@@ -1,14 +1,18 @@
+from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMultiAlternatives
-from django.db.models.signals import post_save, m2m_changed
+from django.db.models.signals import m2m_changed
 from django.dispatch import receiver
 from django.template.loader import render_to_string
 
-from news.models import Post, Category, PostCategory, CategorySubscriber
+from news.models import Category, PostCategory, CategorySubscriber
 
 
 @receiver(m2m_changed, sender=PostCategory)
 def notify_subscribers_new_post(sender, instance, action, **kwargs):
     if action == 'post_add':
+        current_site = get_current_site(request=None)
+        domain = current_site.domain
+        protocol = "http"
         new_cats = Category.objects.filter(id__in=kwargs['pk_set'])
         for cat in new_cats:
             subject = f'Новая статья в категории {cat.title}'
@@ -19,6 +23,7 @@ def notify_subscribers_new_post(sender, instance, action, **kwargs):
                         'subscriber': subscription.subscriber,
                         'category': cat,
                         'post': instance,
+                        'post_link': f'{protocol}://{domain}{instance.get_absolute_url()}'
                     }
                 )
                 msg = EmailMultiAlternatives(

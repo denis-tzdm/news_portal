@@ -15,7 +15,7 @@
     width: 80%;
     margin-left: auto;
     margin-right: auto;">
-        <p><b>{{ post.title|censor }}</b></p>
+        <p><b><a href="{{ post_link }}">{{ post.title|censor }}</a></b></p>
         <b>{{ post.author }}</b>, {{ post.create_ts|date:'d.m.y' }}
         <hr>
         <div style="text-align: justify;">
