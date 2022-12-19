@@ -1,4 +1,6 @@
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import (
     ListView,
@@ -10,7 +12,7 @@ from django.views.generic import (
 
 from .filters import PostFilter
 from .forms import PostForm
-from .models import Post, Author, Category
+from .models import Post, Author, Category, CategorySubscriber
 
 
 class PostList(ListView):
@@ -28,13 +30,16 @@ class PostList(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['filterset'] = self.filterset
-        context['category'] = ''
+        context['category'] = None
+        context['all_categories'] = True
         context['categories'] = Category.objects.all()
         add_author_fields(self, context)
         return context
 
 
 class CategoryPostList(PostList):
+    subscribe_mode = ''
+
     def get_queryset(self):
         cat = Category.objects.filter(id=self.kwargs['pk']).first()
         queryset = Post.objects.filter(postcategory__category=cat)
@@ -44,8 +49,25 @@ class CategoryPostList(PostList):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['all_categories'] = False
+        cat = Category.objects.filter(id=self.kwargs['pk']).first()
         context['category'] = Category.objects.filter(id=self.kwargs['pk']).first()
+        context['is_subscribed'] = self.request.user.is_authenticated and \
+                                   self.request.user.categorysubscriber_set.filter(category=cat).exists()
         return context
+
+    def get(self, request, *args, **kwargs):
+        if self.subscribe_mode:
+            response = HttpResponseRedirect(reverse('cat_post_list', args=[self.kwargs['pk']]))
+            cat = Category.objects.filter(id=self.kwargs['pk']).first()
+            if cat:
+                if self.subscribe_mode == 'subscribe':
+                    CategorySubscriber.objects.get_or_create(category=cat, subscriber=self.request.user)
+                if self.subscribe_mode == 'unsubscribe':
+                    CategorySubscriber.objects.filter(category=cat, subscriber=self.request.user).delete()
+        else:
+            response = super().get(request, *args, **kwargs)
+        return response
 
 
 class PostDetail(DetailView):
@@ -100,6 +122,11 @@ class PostEdit(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
         context['action'] = 'Изменение'
         context['type'] = get_post_type(context['post'])
         return context
+
+    def get_form_kwargs(self):
+        kwargs = super(PostEdit, self).get_form_kwargs()
+        # kwargs['author'] = Author.objects.get(user=self.request.user)
+        return kwargs
 
 
 class PostDelete(PermissionRequiredMixin, DeleteView):

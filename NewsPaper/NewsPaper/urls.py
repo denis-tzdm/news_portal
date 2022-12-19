@@ -23,5 +23,5 @@ urlpatterns = [
     path('news/', include('news.urls')),
     path('articles/', include('news.art_urls')),
     path('accounts/', include('allauth.urls')),
-    path('became_author/', became_author),
+    path('became_author/', became_author, name='became_author'),
 ]

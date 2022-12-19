@@ -7,15 +7,15 @@
 
 {% block links %}
     {% if show_became_author %}
-        <li class="nav-item"><a class="nav-link" href="/became_author">Стать автором</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'became_author' %}">Стать автором</a></li>
     {% endif %}
     {% if is_author %}
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown"
                aria-expanded="false">Написать</a>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                <li><a class="dropdown-item" href="/news/create">Новость</a></li>
-                <li><a class="dropdown-item" href="/articles/create">Статью</a></li>
+                <li><a class="dropdown-item" href="{% url 'news_create' %}">Новость</a></li>
+                <li><a class="dropdown-item" href="{% url 'article_create' %}">Статью</a></li>
             </ul>
         </li>
     {% endif %}
@@ -24,7 +24,7 @@
 
 {% block content %}
     <h2>{{ post.title|censor }}</h2>
-    {{ post.create_ts|date:'d.m.y' }}
+    <b>{{ post.author }}</b>, {{ post.create_ts|date:'d.m.y' }}
     <hr>
     <div style="
     text-align: justify;

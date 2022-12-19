@@ -3,10 +3,10 @@
 {% load news_tags %}
 
 {% block title %}
-    {% if category %}
-        Категория {{ category }}
-    {% elif category == '' %}
+    {% if all_categories %}
         Все записи
+    {% elif category %}
+        Категория {{ category }}
     {% else %}
         Неизвестная категория
     {% endif %}
@@ -15,17 +15,26 @@
 
 {% block links %}
     {% if show_became_author %}
-        <li class="nav-item"><a class="nav-link" href="/became_author">Стать автором</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'became_author' %}">Стать автором</a></li>
     {% endif %}
     {% if is_author %}
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown"
                aria-expanded="false">Написать</a>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                <li><a class="dropdown-item" href="/news/create">Новость</a></li>
-                <li><a class="dropdown-item" href="/articles/create">Статью</a></li>
+                <li><a class="dropdown-item" href="{% url 'news_create' %}">Новость</a></li>
+                <li><a class="dropdown-item" href="{% url 'article_create' %}">Статью</a></li>
             </ul>
         </li>
+    {% endif %}
+    {% if category %}
+        {% if is_subscribed %}
+            <li class="nav-item"><a class="nav-link" href="{% url 'cat_unsubscribe' category.id %}">Отписаться от
+                категории</a></li>
+        {% else %}
+            <li class="nav-item"><a class="nav-link" href="{% url 'cat_subscribe' category.id %}">Подписаться на
+                категорию</a></li>
+        {% endif %}
     {% endif %}
     {{ block.super }}
 {% endblock links %}
@@ -44,10 +53,10 @@
                 {% if categories %}
                     {% for cat in categories %}
                         {% if cat == category %}
-                            <a href="/news/categories/{{ cat.id }}"><b>{{ cat }}</b></a>
+                            <a href="{% url 'cat_post_list' cat.id %}"><b>{{ cat }}</b></a>
                             <br>
                         {% else %}
-                            <a href="/news/categories/{{ cat.id }}">{{ cat }}</a>
+                            <a href="{% url 'cat_post_list' cat.id %}">{{ cat }}</a>
                             <br>
                         {% endif %}
                     {% endfor %}
@@ -59,8 +68,8 @@
 
     {% if postlist %}
         {% for post in postlist %}
-            {{ post.author }} {{ post.create_ts|date:'d.m.y H:i:s' }}<br>
-            <a href="/news/{{ post.id }}"><b>{{ post.title|censor }}</b></a><br>
+            <b>{{ post.author }}</b>, {{ post.create_ts|date:'d.m.y' }}<br>
+            <a href="{% url 'post_details' post.id %}"><b>{{ post.title|censor }}</b></a><br>
             {{ post.content|censor|truncatewords:20 }}
             <hr>
         {% endfor %}
