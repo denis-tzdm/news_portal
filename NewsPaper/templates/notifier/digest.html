@@ -1,0 +1,34 @@
+{% extends 'notifier/main.html' %}
+{% load news_filters %}
+
+{% block main_message %}
+    <p>В категориях, на которые Вы подписаны, на прошедшей неделе опубликованы новые статьи.</p>
+    <br>
+{% endblock %}
+
+{% block button %}
+{% endblock %}
+
+{% block secondary_message %}
+    {% for cat in categories %}
+        {% if cat.all_posts %}
+            <h3 style="text-transform: uppercase">{{ cat }}:</h3>
+            {% for post in cat.all_posts %}
+                <div style="
+    text-align: center;
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;">
+                    <p><b><a href="{{ posts_link }}{{ post.id }}">{{ post.title|censor }}</a></b></p>
+                    <b>{{ post.author }}</b>, {{ post.create_ts|date:'d.m.y' }}
+                    <hr>
+                    <div style="text-align: justify;">
+                        {{ post.content|censor|truncatechars:150 }}
+                    </div>
+                    <hr class="double">
+                </div>
+            {% endfor %}
+            <hr>
+        {% endif %}
+    {% endfor %}
+{% endblock %}

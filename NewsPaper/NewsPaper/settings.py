@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
+    'django_apscheduler',
 ]
 
 MIDDLEWARE = [
@@ -123,7 +124,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Yerevan'
 
 USE_I18N = True
 
@@ -175,3 +176,7 @@ EMAIL_USE_SSL = True
 
 SERVER_EMAIL = str(os.getenv('DEFAULT_FROM_EMAIL'))
 DEFAULT_FROM_EMAIL = str(os.getenv('DEFAULT_FROM_EMAIL'))
+
+# django_apscheduler
+APSCHEDULER_DATETIME_FORMAT = "Y.m.d H:i:s"
+APSCHEDULER_RUN_NOW_TIMEOUT = 25

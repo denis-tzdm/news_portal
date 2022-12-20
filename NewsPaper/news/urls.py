@@ -7,7 +7,7 @@ from .views import (
     PostCreate,
     PostEdit,
     PostDelete,
-    CategoryPostList,
+    CategoryPostList
 )
 
 urlpatterns = [
@@ -16,7 +16,7 @@ urlpatterns = [
     path('create/', PostCreate.as_view(), name='news_create'),
     path('<int:pk>/edit', PostEdit.as_view(), name='news_edit'),
     path('<int:pk>/delete', PostDelete.as_view(), name='news_delete'),
-    path('categories/', PostList.as_view(), name='post_list'),
+    path('categories/', PostList.as_view(), name='cats_list'),
     path('categories/<int:pk>', CategoryPostList.as_view(), name='cat_post_list'),
     path('categories/<int:pk>/subscribe',
          login_required(CategoryPostList.as_view(subscribe_mode='subscribe')),
