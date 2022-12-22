@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from django.contrib.auth.models import User
+from django.core.cache import cache
 from django.db import models
 from django.urls import reverse
 
@@ -92,6 +93,10 @@ class Post(models.Model):
     def get_absolute_url(self):
         return reverse('post_details', args=[str(self.id)])
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        cache.delete(f'post_{self.pk}')
+
 
 class PostCategory(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
@@ -117,6 +122,7 @@ class Comment(models.Model):
         """Понизить рейтинг комментария на 1"""
         self.rating -= 1
         self.save()
+
 
 class CategorySubscriber(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)

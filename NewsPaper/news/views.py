@@ -1,6 +1,7 @@
 from datetime import datetime, date, time
 
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.core.cache import cache
 from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import (
@@ -81,6 +82,14 @@ class PostDetail(DetailView):
         context['type'] = get_post_type(context['post'])
         add_author_fields(self, context)
         return context
+
+    def get_object(self, *args, **kwargs):
+        obj = cache.get(f'post_{self.kwargs["pk"]}',
+                        None)
+        if not obj:
+            obj = super().get_object(queryset=self.queryset)
+            cache.set(f'post_{self.kwargs["pk"]}', obj)
+        return obj
 
 
 class PostCreate(PermissionRequiredMixin, CreateView):

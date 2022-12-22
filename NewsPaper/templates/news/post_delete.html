@@ -2,7 +2,9 @@
 {% load news_tags %}
 
 {% block title %}
-    {{ action }}: {{ type|lower }}
+    {% block page_title %}
+        {{ action }}: {{ type|lower }}
+    {% endblock page_title %}
 {% endblock title %}
 
 {% block content %}

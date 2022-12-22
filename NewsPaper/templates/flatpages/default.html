@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,8 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <meta name="description" content=""/>
     <meta name="author" content=""/>
-    <title>Bare - Start Bootstrap Template</title>
-    {% load static %}
+    <title>NewsPaper - {% block page_title %}{{ flatpage.title }}{% endblock page_title %}</title>
     <!-- Favicon-->
     <link rel="icon" type="image/png" href="{% static 'assets/favicon.png' %}"/>
     <!-- Core theme CSS (includes Bootstrap)-->
@@ -16,7 +16,14 @@
 <!-- Responsive navbar-->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
-        <a class="navbar-brand" href="#">{% block title %}{{ flatpage.title }}{% endblock title %}</a>
+        <a class="navbar-brand" href="/">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32">
+                <path fill="none" d="M0 0h24v24H0z"/>
+                <path fill="white" stroke="none"
+                      d="M16 20V4H4v15a1 1 0 0 0 1 1h11zm3 2H5a3 3 0 0 1-3-3V3a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v7h4v9a3 3 0 0 1-3 3zm-1-10v7a1 1 0 0 0 2 0v-7h-2zM6 6h6v6H6V6zm2 2v2h2V8H8zm-2 5h8v2H6v-2zm0 3h8v2H6v-2z"/>
+            </svg>
+        </a>
+        <a class="navbar-brand" href="">{% block title %}{{ flatpage.title }}{% endblock title %}</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span
                 class="navbar-toggler-icon"></span></button>

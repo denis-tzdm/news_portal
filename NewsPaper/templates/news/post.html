@@ -1,6 +1,8 @@
 {% extends 'flatpages/default.html' %}
 {% load news_filters %}
 
+{% block page_title %}NewsPaper - {{ post.title|censor }}{% endblock page_title %}
+
 {% block title %}
     {{ type }}
 {% endblock title %}

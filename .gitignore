@@ -2,3 +2,4 @@
 /OAuth_client_secret.json
 /NewsPaper/celerybeat-schedule.dat
 /NewsPaper/celerybeat-schedule.dir
+/NewsPaper/_cache/

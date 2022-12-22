@@ -1,15 +1,18 @@
 {% extends 'flatpages/default.html' %}
+{% load cache %}
 {% load news_filters %}
 {% load news_tags %}
 
 {% block title %}
-    {% if all_categories %}
-        Все записи
-    {% elif category %}
-        Категория {{ category }}
-    {% else %}
-        Неизвестная категория
-    {% endif %}
+    {% block page_title %}
+        {% if all_categories %}
+            Все записи
+        {% elif category %}
+            Категория {{ category }}
+        {% else %}
+            Неизвестная категория
+        {% endif %}
+    {% endblock page_title %}
     {% if postlist %}(всего {{ postlist|length }}){% endif %}
 {% endblock title %}
 
@@ -51,15 +54,17 @@
             </td>
             <td style="width: 30%">
                 {% if categories %}
-                    {% for cat in categories %}
-                        {% if cat == category %}
-                            <a href="{% url 'cat_post_list' cat.id %}"><b>{{ cat }}</b></a>
-                            <br>
-                        {% else %}
-                            <a href="{% url 'cat_post_list' cat.id %}">{{ cat }}</a>
-                            <br>
-                        {% endif %}
-                    {% endfor %}
+                    {% cache 600 cats category %}
+                        {% for cat in categories %}
+                            {% if cat == category %}
+                                <a href="{% url 'cat_post_list' cat.id %}"><b>{{ cat }}</b></a>
+                                <br>
+                            {% else %}
+                                <a href="{% url 'cat_post_list' cat.id %}">{{ cat }}</a>
+                                <br>
+                            {% endif %}
+                        {% endfor %}
+                    {% endcache %}
                 {% endif %}
             </td>
         </tr>
