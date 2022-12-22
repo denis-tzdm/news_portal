@@ -1,15 +1,12 @@
 import logging
 
-from django.conf import settings
-
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
+from django.conf import settings
 from django.core.management.base import BaseCommand
+from django_apscheduler import util
 from django_apscheduler.jobstores import DjangoJobStore
 from django_apscheduler.models import DjangoJobExecution
-from django_apscheduler import util
-
-from notifier.tasks import send_digest
 
 logger = logging.getLogger(__name__)
 
@@ -34,18 +31,19 @@ class Command(BaseCommand):
         scheduler = BlockingScheduler(timezone=settings.TIME_ZONE)
         scheduler.add_jobstore(DjangoJobStore(), "default")
 
-        scheduler.add_job(
-            send_digest,
-            trigger=CronTrigger(
-                day_of_week="mon",
-                hour="12",
-                minute="00"
-            ),
-            id="send_digest",
-            max_instances=1,
-            replace_existing=True,
-        )
-        logger.info("Added job 'send_digest'.")
+        # rewritten to run by celery
+        # scheduler.add_job(
+        #     send_digest,
+        #     trigger=CronTrigger(
+        #         day_of_week="mon",
+        #         hour="12",
+        #         minute="00"
+        #     ),
+        #     id="send_digest",
+        #     max_instances=1,
+        #     replace_existing=True,
+        # )
+        # logger.info("Added job 'send_digest'.")
 
         scheduler.add_job(
             delete_old_job_executions,

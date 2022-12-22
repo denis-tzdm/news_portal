@@ -1,2 +1,4 @@
 /NewsPaper/NewsPaper/.env
 /OAuth_client_secret.json
+/NewsPaper/celerybeat-schedule.dat
+/NewsPaper/celerybeat-schedule.dir
