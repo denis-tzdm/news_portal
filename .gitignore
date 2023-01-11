@@ -3,3 +3,4 @@
 /NewsPaper/celerybeat-schedule.dat
 /NewsPaper/celerybeat-schedule.dir
 /NewsPaper/_cache/
+/NewsPaper/backup.json
